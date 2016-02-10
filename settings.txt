@@ -1,0 +1,29 @@
+[cluster]
+env_name=lma
+virt_type=kvm
+fuel_ip="172.16.168.164"
+kvm_count=5
+machines_count=0
+config_mode=ha_compact
+release_name=ubuntu
+net_provider=neutron
+net_segment_type=vlan
+debug=true
+nova_quota=true
+settings:{"volumes_lvm": false, "volumes_ceph": true, "images_ceph": true, "ephemeral_ceph": false,
+ "objects_ceph": true, "osd_pool_size": "1", "sahara": true, "murano": true, "ceilometer": true}
+plugins:{
+ "elasticsearch_kibana": {},
+ "influxdb_grafana": {"mysql_password": "grafana","grafana_userpass": "lmapass", 
+ "influxdb_userpass": "lmapass", "influxdb_rootpass": "lmapass"},
+ "lma_infrastructure_alerting": {"send_to": "root@localhost", "send_from": "nagios@localhost", "smtp_host": "127.0.0.1"},
+ "lma_collector": {"alerting_mode": "local"}}
+node_roles={
+ "node_1_controller":{"manufacturer":"KVM", "roles": ["controller", "mongo"]},
+ "node_2_controller":{"manufacturer":"KVM", "roles": ["controller", "mongo"]},
+ "node_3_controller":{"manufacturer":"KVM", "roles": ["controller", "mongo"]},
+ "node_4_compute":{"manufacturer":"KVM", "roles": ["compute", "ceph-osd"]},
+ "node_5_lma":{"manufacturer":"KVM", "roles": ["elasticsearch_kibana", "influxdb_grafana", "infrastructure_alerting"]}}
+networks:{"public":{"ip_ranges":[["172.16.168.165", "172.16.168.170"]],
+ "cidr": "172.16.168.160/27", "gateway":"172.16.168.161"},
+ "networking_parameters":{"floating_ranges": [["172.16.168.171", "172.16.168.190"]]}}
